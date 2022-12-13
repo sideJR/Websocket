@@ -1,0 +1,14 @@
+{
+  "name": "websocket_08130263",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webserver_08130263.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^4.5.1"
+  }
+}

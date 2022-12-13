@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <meta charset="utf-8">
+    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+    <body>
+        <h1>Chang your LED</h1>
+        
+        <table>
+            <tr>                
+                <td>
+                    <img id="LED1" src="http://120.125.80.114/jpyuImages/IoT/08130263/off.png" alt="Off Light" width="500" height="450">
+                    <img id="LED2" src="http://120.125.80.114/jpyuImages/IoT/08130263/off_2.png" alt="On Light" width="450" height="600">
+                </td>
+            </tr>
+        </table>
+
+        <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+        <script>
+            // 初始化firebase
+            var config = {
+                    apiKey: "AIzaSyDpyOLzaJLnpynacgoJOGM_6IHWBAw_5xY",
+                    authDomain: "many-1704d.firebaseapp.com",
+                    databaseURL: "https://many-1704d-default-rtdb.firebaseio.com",
+                    projectId: "many-1704d",
+                    storageBucket: "many-1704d.appspot.com",
+                    messagingSenderId: "528881116891",
+                    appId: "1:528881116891:web:e9c2c6132dfc529fc20efe",
+                    measurementId: "G-QBRNQZXMPL"
+                };
+            // 啟動firebase
+            firebase.initializeApp(config);
+
+            var db = firebase.database();
+            var ref = db.ref('LED');
+
+            // 取得firebase資料
+            function Get_Firebase(){                
+                ref.on("value", function(snapshot){
+                        console.log(snapshot.val());
+                        console.log(snapshot.val()['LED1']);
+
+                        Change_Led('LED1', snapshot.val()['LED1']);
+                        Change_Led('LED2', snapshot.val()['LED2']);
+                    },
+                    function(error){
+                        console.log("Error: " + error.code);
+                    }
+                );
+            }
+
+            // 切換LED圖片
+            function Change_Led(id, value){
+                var str = document.getElementById(id).src;
+                var text = "";
+
+                // 判斷變更哪張圖片
+                if(id.includes("1")){
+                    // 0：ON，1：OFF
+                    if(value == 0){
+                        str = 'http://120.125.80.114/jpyuImages/IoT/08130263/on.png';
+                    }
+                    else{
+                        str = 'http://120.125.80.114/jpyuImages/IoT/08130263/off.png';
+                    }
+                }
+                else{
+                    if(value == 0){
+                        str = 'http://120.125.80.114/jpyuImages/IoT/08130263/on_2.png';
+                    }
+                    else{
+                        str = 'http://120.125.80.114/jpyuImages/IoT/08130263/off_2.png';
+                    }
+                }
+                // 切換圖片
+                document.getElementById(id).src = str;
+                socket.emit('ChangeLED', Number(value));
+            }
+            Get_Firebase();
+
+            var socket = io();
+            var led = false;
+            
+            window.addEventListener("load",
+                function(){
+                    var light = document.getElementById('chkLight');
+                    
+                    // add enent listener when checkbox changes
+                    light.addEventListener("change",
+                        function(){
+                            // send button
+                            console.log("light_statue change");
+                            
+                        }
+                    );
+                }
+            );
+
+            // socket.io('light',
+            //     function(data){
+            //         document.getElementById('chkLight').checked = data;
+            //         socket.emit('chkLight', data);
+            //     }
+            // );
+        </script>
+    </body>
+</html>
